@@ -35,14 +35,6 @@ public class QuickSortDualPivot extends Sort
             swap(ar, start, start + 1);
     }
 
-    public void swap(int[] ar, int i, int j)
-    {
-        int temp = ar[i];
-        ar[i] = ar[j];
-        ar[j] = temp;
-        swaps++;
-    }
-
     public boolean isSorted(int[] ar, int start, int end)
     {
         if(start >= end)
@@ -76,6 +68,7 @@ public class QuickSortDualPivot extends Sort
             comparisons++;
             if (ar[i] < ar[start])
             {
+                swaps++;
                 swap(ar, i, lt);
                 i++;
                 lt++;
@@ -83,6 +76,7 @@ public class QuickSortDualPivot extends Sort
             else if (ar[i] > ar[end])
             {
                 comparisons++;
+                swaps++;
                 swap(ar, i, gt);
                 gt--;
             }
@@ -95,6 +89,7 @@ public class QuickSortDualPivot extends Sort
         lt--;
         swap(ar, start, lt);
         gt++;
+        swaps++;
         swap(ar, gt, end);
 
         dualPivot(ar, start, lt - 1);

@@ -19,5 +19,6 @@ public class InsertionSort extends Sort
     {
         InsertionSort insrtSort = new InsertionSort(false, 10000);
         insrtSort.calculateStatistics();
+        //System.out.println(java.util.Arrays.toString(insrtSort.sequence));
     }
 }

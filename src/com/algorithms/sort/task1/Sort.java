@@ -19,8 +19,6 @@ public abstract class Sort
     {
         this.isSorted = isSorted;
         this.size = size;
-        comparisons = 0;
-        swaps = 0;
     }
 
     abstract void runSort();
@@ -89,20 +87,18 @@ public abstract class Sort
         }
     }
 
-    public void insertionSort(int[] sequence, int start, int end)
+    public void insertionSort(int[] arr, int start, int end)
     {
         //System.out.println(java.util.Arrays.toString(sequence));
         for(int i = start + 1; i < end; i++)
         {
             int j = i;
             comparisons++;
-            while (j > 0 && sequence[j] < sequence[j - 1])
+            while (j > 0 && arr[j] < arr[j - 1])
             {
                 comparisons++;
                 swaps++;
-                int temp = sequence[j];
-                sequence[j] = sequence[j - 1];
-                sequence[j - 1] = temp;
+                swap(arr, j, j - 1);
 
                 j--;
                 //System.out.println(java.util.Arrays.toString(sequence));
@@ -110,34 +106,106 @@ public abstract class Sort
         }
     }
 
-    public int partition(int[] list, int leftIndex, int rightIndex)
+    public int[] mergeSort(int[] arr)
     {
-        int left = leftIndex;
-        int right = rightIndex;
-        int pivot = list[leftIndex];
+        int size = arr.length;
+//*        System.out.println(java.util.Arrays.toString(inputSequence));
 
-        while (left < right)
+        if(size > 1)
         {
-            comparisons++;
-            if (list[left] < pivot)
+            int mid = size / 2;
+            int leftSize = mid;
+            int rightSize = size - mid;
+            int[] left = new int[leftSize];
+            int[] right = new int[rightSize];
+
+            for (int i = 0; i < mid; i++)
             {
-                left++;
-                continue;
+                left[i] = arr[i];
             }
-            comparisons++;
-            if (list[right] > pivot)
+            for (int i = mid; i < size; i++)
             {
-                right--;
-                continue;
+                right[i - mid] = arr[i];
             }
-            swaps++;
-            int tmp = list[left];
-            list[left] = list[right];
-            list[right] = tmp;
-            left++;
+            //*        System.out.println(java.util.Arrays.toString(left));
+            //*        System.out.println(java.util.Arrays.toString(right));
+            left = mergeSort(left);
+            right = mergeSort(right);
+            merge(left, right, arr);
         }
 
-        return left;
+        return arr;
+    }
+
+    public void merge(int[] left, int[] right, int[] arr)
+    {
+        int leftSize = left.length;
+        int rightSize = right.length;
+
+        int i = 0, j = 0, k = 0;
+        while(leftSize != j && rightSize != k)
+        {
+            comparisons++;
+            if(left[j] < right[k])
+            {
+                arr[i] = left[j];
+                i++;
+                j++;
+            }
+            else
+            {
+                arr[i] = right[k];
+                i++;
+                k++;
+                swaps++;
+            }
+        }
+
+        while(leftSize != j)
+        {
+            arr[i] = left[j];
+            i++;
+            j++;
+        }
+
+        while(rightSize != k)
+        {
+            arr[i] = right[k];
+            i++;
+            k++;
+        }
+    }
+
+    public int partition(int[] arr, int left, int right)
+    {
+        int pivotIdx = (left + right) / 2;
+        int pivot = arr[pivotIdx];
+
+        swap(arr, pivotIdx, right);
+        int actualPosition = left;
+
+        for (int i = left; i <= right - 1; i++)
+        {
+            comparisons++;
+            if (arr[i] <= pivot)
+            {
+                swap(arr, i, actualPosition);
+                swaps++;
+                actualPosition++;
+            }
+        }
+        //System.out.println(java.util.Arrays.toString(list));
+        swap(arr, actualPosition, right);
+
+        return actualPosition;
+    }
+
+    public void swap(int[] array, int i, int j)
+    {
+        int temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+        //swaps++;
     }
 
     public void calculateStatistics()
@@ -149,15 +217,26 @@ public abstract class Sort
             long sumOfComp = 0;
             long sumOfSwaps = 0;
 
-            int numberOfRepeat = 10;
+            int numberOfRepeat = 15;
             for (int i = 0; i < numberOfRepeat; i++)
             {
+                comparisons = 0;
+                swaps = 0;
                 sequence = createSequence(currentSize);
-                reverseSequence();
-                runSort();
+                //reverseSequence();
+                try
+                {
+                    runSort();
+                }
+                catch(AssertionError assErr)
+                {
+                    System.out.println("Error");
+                }
+
                 sumOfComp += comparisons;
                 sumOfSwaps += swaps;
             }
+            /* Average numbers of comparisons and swaps */
             comparisons = sumOfComp / numberOfRepeat;
             swaps = sumOfSwaps / numberOfRepeat;
             System.out.println(currentSize + " " + comparisons + " " + swaps);

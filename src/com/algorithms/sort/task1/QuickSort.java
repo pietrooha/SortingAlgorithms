@@ -20,23 +20,22 @@ public class QuickSort extends Sort
         //System.out.println(java.util.Arrays.toString(sequence));
     }
 
-    public int[] quickSort(int[] sequence, int start, int end)
+    public int[] quickSort(int[] sequence, int left, int right)
     {
-        if(start < end)
+        if(left < right)
         {
-            int pivot;
-            pivot = partition(sequence, start, end);
-            quickSort(sequence, start, pivot - 1);
-            quickSort(sequence, pivot + 1, end);
+            int position = partition(sequence, left, right);
+            quickSort(sequence, left, position - 1);
+            quickSort(sequence, position + 1, right);
         }
-//        System.out.println(java.util.Arrays.toString(sequence));
 
-        return  sequence;
+        return sequence;
     }
 
     public static void main(String[] args)
     {
-        QuickSort quickSort = new QuickSort(false, 10000);
+        QuickSort quickSort = new QuickSort(false, 1000);
         quickSort.calculateStatistics();
+        //System.out.println(java.util.Arrays.toString(quickSort.sequence));
     }
 }
